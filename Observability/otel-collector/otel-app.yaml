@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opentelemetry-collector
+  namespace: argocd
+spec:
+  project: default
+  source:
+    chart: opentelemetry-collector
+    repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
+    targetRevision: 0.70.0
+    helm:
+      values: |
+        mode: deployment
+        config:
+          receivers:
+            otlp:
+              protocols:
+                grpc:
+                http:
+          exporters:
+            prometheus:
+              endpoint: "0.0.0.0:8889"
+            logging:
+              verbosity: detailed
+            # Conex∆o com o Datadog
+            datadog:
+              api:
+                key: "SUA_API_KEY_AQUI"
+                site: "datadoghq.com"
+          service:
+            pipelines:
+              metrics:
+                receivers: [otlp]
+                exporters: [prometheus, datadog, logging]
+              traces:
+                receivers: [otlp]
+                exporters: [datadog, logging]
+              logs:
+                receivers: [otlp]
+                exporters: [datadog, logging]
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
