@@ -37,4 +37,20 @@ spec:
         - name: POSTGRES_DB
           value: "targeting"
         - name: AUTH_SERVICE_URL
-          value: "http://app-auth-service.auth-service.svc.cluster.local:8001"
+          value: "http://app-auth-service.auth-service.svc.cluster.local:8000" # Ajustado para bater na porta 8000 do SVC que vimos no kubectl get svc -A
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-targeting-service
+  namespace: targeting-service
+  labels:
+    app: app-targeting-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8003
+    targetPort: 8003
+    protocol: TCP
+  selector:
+    app: app-targeting-service
