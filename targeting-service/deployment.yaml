@@ -25,3 +25,16 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8003
+        env:
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "postgres"
+        - name: POSTGRES_HOST
+          value: "postgres-targeting-service" # Ajuste se o host do seu postgres no cluster for diferente
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_DB
+          value: "targeting"
+        - name: AUTH_SERVICE_URL
+          value: "http://app-auth-service.auth-service.svc.cluster.local:8001" # URL interna do seu auth-service
