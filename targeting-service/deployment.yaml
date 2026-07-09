@@ -19,5 +19,9 @@ spec:
       labels:
         app: app-targeting-service
     spec:
-      initContainers:
-
+      containers:
+      - name: app-targeting-service
+        image: 396368123600.dkr.ecr.us-east-1.amazonaws.com/togglemaster_targeting-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8003
