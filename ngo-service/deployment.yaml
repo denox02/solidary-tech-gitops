@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ngo-service
+  namespace: solidary-tech
+  labels:
+    project: solidary-tech      # FinOps Label exigida no PDF
+    environment: production     # FinOps Label exigida no PDF
+    costcenter: ngo-core        # FinOps Label exigida no PDF
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ngo-service
+  template:
+    metadata:
+      labels:
+        app: ngo-service
+        project: solidary-tech   # FinOps Label
+        environment: production  # FinOps Label
+        costcenter: ngo-core     # FinOps Label
+    spec:
+      containers:
+      - name: ngo-service
+        image: 385809084763.dkr.ecr.us-east-1.amazonaws.com/solidary-tech/ngo-service:latest
+        ports:
+        - containerPort: 8080
+        
+        # --- REQUISITO OBRIGATÓRIO: RIGHTSIZING ---
+        resources:
+          requests:
+            cpu: "100m"         # Evita travar os nós pequenos da AWS Academy
+            memory: "128Mi"     # Alocação inicial segura
+          limits:
+            cpu: "200m"         # Limite máximo para evitar estouro do nó
+            memory: "256Mi"     # Limite de segurança contra Memory Leak
+            
+        # Probes essenciais para o SRE / Auto-healing
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10

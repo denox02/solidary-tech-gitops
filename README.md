@@ -54,6 +54,12 @@ Para os serviços com PostgreSQL (`auth`, `flag`, `targeting`), o schema é inic
 
 O `configmap.yaml` de cada serviço é atualizado automaticamente pela pipeline CI sempre que o `db/init.sql` muda no `tech-challenge-apps`.
 
+## Observabilidade e autoescalonamento
+
+- Todos os serviços agora expõem `/metrics` para scraping Prometheus.
+- Os deployments incluem anotações de scraping para `/metrics`.
+- Serviços de `auth`, `flag` e `targeting` ganharam HPAs para scaling automático.
+
 ## Registrar as Applications no ArgoCD
 
 ```bash

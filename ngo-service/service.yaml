@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ngo-service
+  namespace: solidary-tech
+  labels:
+    project: solidary-tech
+    environment: production
+    costcenter: ngo-core
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: ngo-service

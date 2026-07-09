@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ngo-service
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/gabriel-cupertino/tech-challenge-gitops.git' # Altere para o SEU repo se mudou
+    targetRevision: main
+    path: ngo-service
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: solidary-tech
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

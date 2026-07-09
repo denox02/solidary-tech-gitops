@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: donation-service
+  namespace: solidary-tech
+  labels:
+    project: solidary-tech      # FinOps
+    environment: production     # FinOps
+    costcenter: ngo-core        # FinOps
+spec:
+  replicas: 3                   # Alta disponibilidade para o caminho crítico
+  selector:
+    matchLabels:
+      app: donation-service
+  template:
+    metadata:
+      labels:
+        app: donation-service
+        project: solidary-tech
+        environment: production
+        costcenter: ngo-core
+    spec:
+      containers:
+      - name: donation-service
+        image: 385809084763.dkr.ecr.us-east-1.amazonaws.com/solidary-tech/donation-service:latest
+        ports:
+        - containerPort: 8080
+
+        # --- RIGHTSIZING DO CAMINHO CRÍTICO ---
+        resources:
+          requests:
+            cpu: "150m"         # Um pouco mais de fôlego inicial
+            memory: "192Mi"
+          limits:
+            cpu: "300m"         # Teto mais alto para picos de doações
+            memory: "384Mi"
+
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
